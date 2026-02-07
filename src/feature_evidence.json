@@ -1,0 +1,43 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-eliminate-any-runtime-dependency-on-the-backend-method-initializeaccesscontrolwithsecret-by-ensuring-the-frontend-no-longer-creates-actors-via-frontend-src-hooks-useactor-ts-anywhere-in-the-app-and-instead-uses-frontend-src-hooks-useappactor-ts-for-actor-creation-in-all-non-immutable-code-paths",
+      "featureTitle": "Eliminate any runtime dependency on the backend method \"_initializeAccessControlWithSecret\" by ensuring the frontend no longer creates actors via frontend/src/hooks/useActor.ts anywhere in the app, and instead uses frontend/src/hooks/useAppActor.ts for actor creation in all non-immutable code paths.",
+      "files": [
+        "frontend/src/utils/urlParams.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-62"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-build-deployment-pipeline-completes-successfully-after-the-actor-initialization-fix",
+      "featureTitle": "Ensure the build/deployment pipeline completes successfully after the actor initialization fix.",
+      "files": [
+        "frontend/scripts/verify-actor-usage.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-64"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

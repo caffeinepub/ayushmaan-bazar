@@ -1,0 +1,630 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 27,
+  "summary": "Android insurance comparison app for Indian market positioned as a legally safe, IRDAI/Play Store–compliant insurance facilitator/lead-generation platform (Policybazaar-like discovery) showing multiple insurers neutrally, with no direct policy purchase or premium collection; includes disclaimers, lead/callback flows, rewards as promotional benefit post-issuance, and support/about/disclaimer sections.",
+  "architectural_notes": [
+    "Android-first app with secure data handling, fast loading, and scalable architecture for future modules (agent/admin/payments/renewals).",
+    "Rewards/cashback should be modeled as a promotional 'Reward Benefit' credited only after policy issuance confirmation from insurer/partner.",
+    "UI requirements: professional trust-based finance style (blue/white), clean iconography, and bottom navigation.",
+    "Localization requirement: Hindi + English support.",
+    "Regulatory requirement: IRDAI-compliant language; include clear disclaimers that the app is a facilitator and cashback is promotional (no guaranteed return claims).",
+    "Branding decision: App name is \"Ayushmaan Bazar\"; update app title, splash screen title, logo text, and documentation accordingly.",
+    "App positioning change: operate strictly as an insurance facilitator/lead-generation platform (no direct policy purchase, no premium collection, no “Buy Now” flows).",
+    "Neutral multi-insurer presentation: do not promote or prioritize any single insurer; use generic product cards and informational wording.",
+    "CTA restriction: only allow “Get Quote” and “Request Call Back” (and informational “Know More/View Details”); avoid direct selling language.",
+    "Add outbound notification integrations triggered on successful Call Back submission (Telegram Bot API now; keep message templates parameterized with lead fields and submission time)."
+  ],
+  "known_issues": [
+    "Automated build/deploy attempt for the admin panel (Internet Identity admin option) failed during implementation.",
+    "Build/deploy fails repeatedly because frontend `useActor.ts` calls missing backend method `_initializeAccessControlWithSecret`."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-implement-app-information-architecture-and-navigation-for-a-mobile-first-ui-with-bottom-tab-navigation-covering-home-categories-compare-rewards-and-support",
+      "title": "Implement app information architecture and navigation for a mobile-first UI with bottom tab navigation covering: Home, Categories, Compare, Rewards, and Support.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-trust-focused-finance-visual-theme-blue-white-clean-typography-strong-spacing-icon-forward-category-tiles-consistently-across-all-screens",
+      "title": "Apply a trust-focused finance visual theme (blue/white, clean typography, strong spacing, icon-forward category tiles) consistently across all screens.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-authentication-using-internet-identity-as-the-supported-sign-in-mechanism-and-collect-a-user-s-mobile-number-as-an-optional-profile-field-after-sign-in-without-sending-otp",
+      "title": "Add authentication using Internet Identity as the supported sign-in mechanism, and collect a user's mobile number as an optional profile field after sign-in (without sending OTP).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-bilingual-ui-support-english-hindi-with-a-language-toggle-in-settings-support-default-to-english-all-compliance-disclaimer-text-must-have-english-and-hindi-variants",
+      "title": "Provide bilingual UI support (English + Hindi) with a language toggle in settings/support; default to English. All compliance/disclaimer text must have English and Hindi variants.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-model-insurance-categories-life-health-motor-term-plan-travel-other-general-and-expose-them-from-the-backend-then-render-a-category-selection-experience-in-the-frontend",
+      "title": "Model insurance categories (Life, Health, Motor, Term Plan, Travel, Other General) and expose them from the backend, then render a category selection experience in the frontend.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-policy-catalog-per-category-seed-data-is-acceptable-for-initial-build-and-build-a-policy-comparison-flow-that-allows-selecting-multiple-policies-and-comparing-price-coverage-and-benefits-side-by-side",
+      "title": "Implement a policy catalog per category (seed data is acceptable for initial build) and build a policy comparison flow that allows selecting multiple policies and comparing price, coverage, and benefits side-by-side.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-lead-submission-flow-for-a-selected-policy-including-a-form-customer-details-preferred-contact-time-notes-and-submit-it-to-the-backend-for-tracking",
+      "title": "Create a lead submission flow for a selected policy including a form (customer details, preferred contact time, notes) and submit it to the backend for tracking.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-call-back-request-option-as-part-of-the-lead-flow-and-as-a-standalone-action-on-the-support-screen-storing-the-request-in-the-backend",
+      "title": "Add a call-back request option as part of the lead flow and as a standalone action on the Support screen, storing the request in the backend.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-rewards-tracker-and-wallet-reward-balance-section-that-displays-reward-benefit-amounts-with-credits-applied-only-after-policy-issuance-confirmation",
+      "title": "Implement a rewards tracker and wallet/reward balance section that displays “Reward Benefit” amounts, with credits applied only after policy issuance confirmation.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-notifications-center-for-offers-and-policy-status-updates-in-app-only-backed-by-a-backend-notifications-feed-per-user",
+      "title": "Add an in-app notifications center for offers and policy status updates (in-app only), backed by a backend notifications feed per user.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-optional-referral-system-each-user-has-a-referral-code-new-users-can-attach-a-referral-code-to-their-profile-show-basic-referral-stats-in-the-rewards-screen",
+      "title": "Implement an optional referral system: each user has a referral code; new users can attach a referral code to their profile; show basic referral stats in the Rewards screen.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-support-help-section-including-faqs-contact-information-and-a-support-ticket-contact-form-that-creates-a-backend-record",
+      "title": "Add a Support & Help section including FAQs, contact information, and a support ticket/contact form that creates a backend record.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-irdai-compliant-compliance-messaging-across-relevant-screens-including-1-the-app-is-an-insurance-facilitator-not-an-insurer-2-reward-benefit-is-a-promotional-benefit-3-no-guaranteed-return-assured-claims-language-include-a-persistent-disclaimer-entry-point-from-home-and-policy-screens",
+      "title": "Display IRDAI-compliant compliance messaging across relevant screens, including: (1) the app is an insurance facilitator, not an insurer; (2) Reward Benefit is a promotional benefit; (3) no guaranteed return/assured claims language. Include a persistent disclaimer entry point from Home and Policy screens.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-product-documentation-deliverables-a-screen-by-screen-app-flow-description-b-monetization-strategy-for-commission-reward-model-c-scaling-strategy-and-roadmap-aligning-with-future-enhancements-agent-panel-admin-dashboard-payment-gateway-renewal-reminders-store-these-docs-in-the-repository-as-markdown-files",
+      "title": "Create product documentation deliverables: (a) screen-by-screen app flow description; (b) monetization strategy for commission + reward model; (c) scaling strategy and roadmap aligning with future enhancements (agent panel, admin dashboard, payment gateway, renewal reminders). Store these docs in the repository as markdown files.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-app-s-visible-brand-name-from-bimarewards-to-ayushmaan-bazar-anywhere-it-appears-in-the-ui-including-the-header-brand-text-and-any-home-disclaimer-compliance-copy-that-currently-references-bimarewards",
+      "title": "Update the app’s visible brand name from “BimaRewards” to “Ayushmaan Bazar” anywhere it appears in the UI, including the header brand text and any home/disclaimer/compliance copy that currently references “BimaRewards”.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-localization-strings-to-reflect-the-new-brand-name-ayushmaan-bazar-for-both-english-and-hindi-translations-wherever-bimarewards-is-currently-used-as-a-proper-noun-brand-name",
+      "title": "Update localization strings to reflect the new brand name “Ayushmaan Bazar” for both English and Hindi translations wherever “BimaRewards” is currently used as a proper noun/brand name.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-html-document-title-to-use-the-app-name-ayushmaan-bazar-instead-of-the-current-generic-descriptive-title",
+      "title": "Update the HTML document title to use the app name “Ayushmaan Bazar” (instead of the current generic descriptive title).",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-repository-documentation-to-use-the-new-product-name-ayushmaan-bazar-including-headings-and-any-narrative-references-currently-using-bimarewards",
+      "title": "Update repository documentation to use the new product name “Ayushmaan Bazar”, including headings and any narrative references currently using “BimaRewards”.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-app-logo-asset-to-match-the-ayushmaan-bazar-branding-and-ensure-the-header-uses-the-updated-logo-asset",
+      "title": "Update the app logo asset to match the “Ayushmaan Bazar” branding and ensure the header uses the updated logo asset.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-callback-request-form-to-collect-the-additional-fields-required-for-the-callback-email-template-email-address-and-insurance-type-and-submit-them-with-the-callback-request-use-english-user-facing-text-for-any-new-labels-validation-messages-and-placeholders-added-by-this-change",
+      "title": "Update the frontend callback request form to collect the additional fields required for the callback email template: email address and insurance type, and submit them with the callback request. Use English user-facing text for any new labels, validation messages, and placeholders added by this change.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-any-references-to-a-paid-subscription-or-premium-subscription-gated-features-from-the-repository-documentation-and-ensure-the-documented-business-model-stays-subscription-free-lead-generation-partnerships-commission-driven-only",
+      "title": "Remove any references to a paid subscription or premium/subscription-gated features from the repository documentation and ensure the documented business model stays subscription-free (lead-generation / partnerships / commission-driven only).",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-all-telegram-credentials-bot-token-and-chat-id-out-of-the-frontend-bundle-do-not-add-the-telegram-bot-token-to-any-frontend-code-config-or-static-assets",
+      "title": "Keep all Telegram credentials (Bot Token and Chat ID) out of the frontend bundle; do not add the Telegram Bot Token to any frontend code, config, or static assets.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-admin-panel-page-in-the-frontend-that-is-visible-only-to-admin-users-and-allows-the-admin-to-review-all-leads-in-a-clear-list-table-ui-with-basic-filtering",
+      "title": "Add an in-app Admin Panel page in the frontend that is visible only to admin users and allows the admin to review all leads in a clear list/table UI with basic filtering.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-admin-panel-to-allow-admins-to-review-notifications-and-create-a-new-in-app-notification-message-category-using-the-existing-admin-only-backend-addnotification-method",
+      "title": "Extend the Admin Panel to allow admins to review notifications and create a new in-app notification (message + category) using the existing admin-only backend addNotification method.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-frontend-data-hooks-react-query-for-admin-only-apis-admin-status-check-list-all-leads-and-ensure-queries-are-invalidated-refetched-appropriately-when-admin-creates-notifications",
+      "title": "Add frontend data hooks (React Query) for admin-only APIs (admin status check, list all leads) and ensure queries are invalidated/refetched appropriately when admin creates notifications.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-admin-panel-page-in-the-frontend-that-is-accessible-only-to-admins-logged-in-with-internet-identity-and-is-not-visible-accessible-to-non-admin-users",
+      "title": "Create a new Admin Panel page in the frontend that is accessible only to admins logged in with Internet Identity, and is not visible/accessible to non-admin users.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-admin-panel-leads-view-in-the-frontend-to-display-all-leads-policy-leads-and-callback-requests-in-a-clear-list-table-ui-with-basic-filtering",
+      "title": "Implement the Admin Panel leads view in the frontend to display all leads (policy leads and callback requests) in a clear list/table UI with basic filtering.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-admin-panel-to-allow-admins-to-review-notifications-and-create-a-new-in-app-notification-message-category-using-the-existing-backend-addnotification-method-and-ensure-frontend-caches-refresh-after-creation",
+      "title": "Extend the Admin Panel to allow admins to review notifications and create a new in-app notification (message + category) using the existing backend addNotification method, and ensure frontend caches refresh after creation.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-hooks-for-the-admin-only-backend-apis-admin-status-check-and-list-all-leads-and-use-them-in-the-admin-panel-ensuring-queries-are-enabled-disabled-appropriately-based-on-actor-readiness-and-auth-state",
+      "title": "Add React Query hooks for the admin-only backend APIs (admin status check and list all leads) and use them in the Admin Panel, ensuring queries are enabled/disabled appropriately based on actor readiness and auth state.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-identify-the-root-cause-of-the-current-build-deploy-failure-and-update-the-codebase-so-a-clean-build-and-deployment-complete-successfully",
+      "title": "Identify the root cause of the current build/deploy failure and update the codebase so a clean build and deployment complete successfully.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-admin-login-mechanism-from-the-frontend-by-eliminating-all-runtime-usage-of-the-admin-secret-token-caffeineadmintoken-and-stopping-any-calls-to-the-backend-actor-method-initializeaccesscontrolwithsecret-during-normal-app-startup-authentication",
+      "title": "Remove the admin-login mechanism from the frontend by eliminating all runtime usage of the admin secret token (\"caffeineAdminToken\") and stopping any calls to the backend actor method \"_initializeAccessControlWithSecret\" during normal app startup/authentication.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-because-frontend-src-hooks-useactor-ts-is-immutable-implement-a-new-non-immutable-actor-hook-new-file-that-creates-the-backend-actor-without-any-admin-initialization-and-update-the-app-to-use-this-new-hook-everywhere-instead-of-importing-using-the-immutable-useactor-hook",
+      "title": "Because frontend/src/hooks/useActor.ts is immutable, implement a new non-immutable actor hook (new file) that creates the backend actor without any admin initialization, and update the app to use this new hook everywhere instead of importing/using the immutable useActor hook.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-the-backend-functional-for-normal-users-after-admin-login-removal-by-ensuring-user-flows-that-require-authentication-profile-save-submit-lead-request-callback-rewards-still-work-without-any-admin-initialization-step-from-the-frontend",
+      "title": "Keep the backend functional for normal users after admin-login removal by ensuring user flows that require authentication (profile save, submit lead, request callback, rewards) still work without any admin initialization step from the frontend.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-instrument-the-frontend-to-record-activity-events-for-successful-login-category-policies-list-view-policy-detail-view-successful-lead-submission-and-successful-callback-request-submission",
+      "title": "Instrument the frontend to record activity events for: successful login, category policies list view, policy detail view, successful lead submission, and successful callback request submission.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-only-activity-feed-page-in-the-frontend-that-displays-the-activity-log-in-a-clear-table-list-ui-with-basic-filters-and-periodic-refresh",
+      "title": "Add an admin-only Activity Feed page in the frontend that displays the activity log in a clear table/list UI with basic filters and periodic refresh.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-activity-tracking-changes-do-not-reintroduce-the-current-build-deploy-failure-risk-related-to-frontend-actor-initialization-calling-missing-or-incompatible-backend-methods",
+      "title": "Ensure activity tracking changes do not reintroduce the current build/deploy failure risk related to frontend actor initialization calling missing or incompatible backend methods.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-stop-the-frontend-from-calling-any-backend-actor-method-named-initializeaccesscontrolwithsecret-or-otherwise-requiring-the-caffeineadmintoken-url-parameter-during-actor-creation-because-the-deployed-backend-candid-interface-does-not-include-that-method-and-it-causes-builds-deploys-to-fail",
+      "title": "Stop the frontend from calling any backend actor method named \"_initializeAccessControlWithSecret\" (or otherwise requiring the \"caffeineAdminToken\" URL parameter) during actor creation, because the deployed backend candid interface does not include that method and it causes builds/deploys to fail.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-because-frontend-src-hooks-useactor-ts-is-immutable-create-a-new-non-immutable-actor-hook-file-that-creates-the-backend-actor-for-anonymous-and-authenticated-users-without-any-admin-access-control-secret-initialization-step-while-preserving-the-existing-behavior-of-caching-the-actor-per-identity-and-invalidating-refetching-dependent-react-query-queries-when-the-actor-changes",
+      "title": "Because frontend/src/hooks/useActor.ts is immutable, create a new non-immutable actor hook file that creates the backend actor for anonymous and authenticated users without any admin/access-control secret initialization step, while preserving the existing behavior of caching the actor per-identity and invalidating/refetching dependent React Query queries when the actor changes.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-non-immutable-frontend-code-to-use-the-new-non-immutable-actor-hook-instead-of-importing-using-frontend-src-hooks-useactor-ts-including-all-existing-react-query-hooks-that-call-backend-methods",
+      "title": "Update all non-immutable frontend code to use the new non-immutable actor hook instead of importing/using frontend/src/hooks/useActor.ts (including all existing React Query hooks that call backend methods).",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-backend-authorization-compatibility-for-normal-user-flows-after-removing-frontend-admin-initialization-ensure-that-the-authenticated-user-flows-that-require-authorization-save-profile-submit-lead-request-callback-get-rewards-still-work-without-any-frontend-side-admin-access-control-secret-initialization-step",
+      "title": "Verify backend/authorization compatibility for normal user flows after removing frontend admin initialization: ensure that the authenticated user flows that require authorization (save profile, submit lead, request callback, get rewards) still work without any frontend-side admin/access-control secret initialization step.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-only-ui-entry-point-in-the-frontend-to-a-configure-telegram-bot-token-chat-id-at-runtime-and-b-send-a-test-telegram-message-using-the-exact-text-new-lead-to-verify-setup-with-all-user-facing-text-in-english",
+      "title": "Add an admin-only UI entry point in the frontend to (a) configure Telegram Bot Token + Chat ID at runtime and (b) send a test Telegram message using the exact text \"New lead ...\" to verify setup, with all user-facing text in English.",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-eliminate-any-runtime-dependency-on-the-backend-method-initializeaccesscontrolwithsecret-by-ensuring-the-frontend-no-longer-creates-actors-via-frontend-src-hooks-useactor-ts-anywhere-in-the-app-and-instead-uses-frontend-src-hooks-useappactor-ts-for-actor-creation-in-all-non-immutable-code-paths",
+      "title": "Eliminate any runtime dependency on the backend method \"_initializeAccessControlWithSecret\" by ensuring the frontend no longer creates actors via frontend/src/hooks/useActor.ts anywhere in the app, and instead uses frontend/src/hooks/useAppActor.ts for actor creation in all non-immutable code paths.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-build-deployment-pipeline-completes-successfully-after-the-actor-initialization-fix",
+      "title": "Ensure the build/deployment pipeline completes successfully after the actor initialization fix.",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Mobile OTP-based user registration & login",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Insurance category browsing/selection (life, health, motor, term, travel, general)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Policy comparison module (price, coverage, benefits)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Lead submission flow to apply/express interest in policies",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Call-back request option for users",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Cashback/Rewards tracker with wallet/reward balance; credit only after policy issuance confirmation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Notifications for offers and policy status updates",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Referral system (optional)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Support & Help section",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Bilingual UI (Hindi + English) with bottom navigation and trust-focused finance styling",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Compliance messaging: disclaimers that cashback is promotional and app is facilitator (IRDAI-compliant language)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Future enhancements: agent panel, admin dashboard, payment gateway integration, policy renewal reminders",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Deliverable: screen-by-screen app flow plus monetization & scaling strategy",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Provide an admin-only backend capability to confirm policy issuance for a lead and apply the corresponding Reward Benefit credit using a configurable percentage of commission (stored/configured in backend).",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Rename/brand app as \"Ayushmaan Bazar\" across UI (app title), splash screen, logo text, and documentation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add product/policy details pages (generic product details view) with neutral informational content and only “Get Quote” / “Request Call Back” CTAs (no purchase).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Send an immediate email notification to Devbhardwaj9897@gmail.com when a Call Back form is submitted, using the provided subject/body template with lead fields.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add legally safe app content sections: About Us, Disclaimer, and Contact & Support (IRDAI/Play Store compliant copy).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Extend the backend callback-request data model to capture all fields required by the user-provided email template, including: customer name, mobile number, email address, insurance type, and submission time. Ensure callback submissions still store as a backend record and remain compliant with the app’s facilitator-only positioning.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Add an internal backend “email outbox” queue for callback submissions. When a callback request is submitted, create a pending outbox item addressed to Devbhardwaj9897@gmail.com using the exact subject and body template provided by the user, populated with the submitted fields and submission time.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Expose admin-only backend methods to (a) list pending callback email outbox entries and (b) mark a specific outbox entry as processed/sent. This is to enable future email delivery once platform email is available, without changing user flows.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Send instant Telegram message to admin via Telegram Bot API when Call Back form is successfully submitted (use bot token + chat id; message template includes name/phone/email/insurance type/submission time).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Send instant WhatsApp notification to admin number when Call Back form is successfully submitted (message template includes name/phone/email/insurance type/submission time).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "After every successful Call Back form submission, send an instant Telegram message via the Telegram Bot API using the provided Bot Token and Chat ID, with the exact message template provided by the user populated from the submitted callback fields (name, phone, email, insurance_type, submission_time).",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Implement robust failure handling for Telegram delivery: if the Telegram API call fails, do not block the callback submission from being stored; record the delivery attempt outcome in backend state (at minimum: submission/lead identifier, timestamp, success/failure, and any error text) so delivery failures are observable.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Identify the root cause of the current build/deploy failure (the error shown as a generic “technical snafu”) and update the codebase so a clean build completes successfully.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Validate that admin-access initialization invoked by the frontend actor bootstrap remains compatible with the backend candid interface (including any authorization/access-control initialization method called during actor creation) and does not break build or runtime startup.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-43",
+      "summary": "Ensure frontend actor bootstrap does not call a backend method that is missing or incompatible with the deployed canister interface. In particular, make the access-control initialization call in the actor creation flow compatible with the backend candid interface and safe to run for authenticated users.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-44",
+      "summary": "Validate that any authorization/access-control initialization invoked during frontend actor creation remains backward-compatible and does not block application startup if the secret token is missing/empty.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-47",
+      "summary": "Remove any admin-only navigation entry points and routes from the frontend (if present in the current codebase), ensuring there is no Admin Panel page accessible or visible in the app UI.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-48",
+      "summary": "Track/log all user activities (login, product/policy views, Get Quote/lead submissions, Call Back requests) and send instant admin notifications for all activities (e.g., via Telegram/WhatsApp) plus an admin dashboard/feed to review activity.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Add backend support for activity tracking by introducing an Activity record type and storing an append-only activity log for these events: user login, category/policy list view, policy detail view, lead submission, and callback request submission.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "Expose admin-only backend APIs to review activities, including a method to check whether the caller is an admin and a method to list activities with basic filtering.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-51",
+      "summary": "Add backend state and admin-only APIs to manage Telegram notification configuration, using the user-provided Bot Token and Chat ID, without exposing these secrets to the frontend bundle.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-52",
+      "summary": "Send a Telegram message to the configured Chat ID after a successful lead submission, using the exact user-provided message text prefix \"New lead ...\", and ensure failures do not block lead storage.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-53",
+      "summary": "Provide an admin-only backend API to list Telegram delivery attempts for debugging/verification.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-55",
+      "summary": "Fix the build/deploy failure by making the frontend actor interface usage compatible with the deployed backend candid interface (i.e., the frontend must only call backend methods that exist in backend/main.mo).",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Ayushmaan Bazar",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,81 @@
+{
+  "kind": "build_request",
+  "title": "Fix build/deploy failure by removing deprecated admin actor initialization call",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-62",
+      "text": "Eliminate any runtime dependency on the backend method \"_initializeAccessControlWithSecret\" by ensuring the frontend no longer creates actors via frontend/src/hooks/useActor.ts anywhere in the app, and instead uses frontend/src/hooks/useAppActor.ts for actor creation in all non-immutable code paths.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "Deployment didn't complete",
+          "Fix it"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A project-wide search shows no non-immutable frontend files import or call useActor from frontend/src/hooks/useActor.ts.",
+        "A project-wide search shows no non-immutable frontend files reference the URL parameter name \"caffeineAdminToken\" or call actor._initializeAccessControlWithSecret(...).",
+        "All existing data hooks and pages continue to function using the actor from useAppActor (anonymous and authenticated)."
+      ]
+    },
+    {
+      "id": "REQ-63",
+      "text": "Fix the build/deploy failure by making the frontend actor interface usage compatible with the deployed backend candid interface (i.e., the frontend must only call backend methods that exist in backend/main.mo).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "Deployment didn't complete",
+          "Fix it"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Frontend builds successfully without TypeScript errors related to backend actor methods (no missing method references at compile time).",
+        "At runtime, the app starts without attempting to call any backend method not present in backend/main.mo (in particular, no calls to \"_initializeAccessControlWithSecret\").",
+        "Authenticated user flows still work: save profile, submit lead, request callback, and view rewards all succeed without any admin/access-control secret initialization step from the frontend."
+      ]
+    },
+    {
+      "id": "REQ-64",
+      "text": "Ensure the build/deployment pipeline completes successfully after the actor initialization fix.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "Deployment didn't complete"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A clean production build of the frontend completes successfully.",
+        "A clean canister build/deploy completes successfully with the updated codebase."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "Backend must remain single-actor with all Motoko logic in backend/main.mo; only add backend/migration.mo if an upgrade requires state migration.",
+    "Use English for any user-facing text added or changed by this fix."
+  ],
+  "nonGoals": [
+    "Adding new product features unrelated to fixing the build/deploy failure.",
+    "Introducing any third-party authentication mechanism beyond Internet Identity.",
+    "Adding external databases, webhooks, or non-IC backend services."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

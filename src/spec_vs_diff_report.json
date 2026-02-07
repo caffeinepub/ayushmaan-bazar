@@ -1,0 +1,51 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-07T04:10:15.816Z",
+  "summary": "Diff adds a frontend verification script and modifies a URL params utility plus two repo metadata/summary files. The diff summary does not show any actual migration of frontend code away from useActor/useAppActor usage, removal of caffeineAdminToken/_initializeAccessControlWithSecret usage, or any backend-interface alignment changes needed to guarantee build/deploy success.",
+  "missing_requirements": [
+    {
+      "id": "REQ-62",
+      "requirement": "Eliminate runtime dependency on backend method \"_initializeAccessControlWithSecret\" by ensuring the frontend no longer creates actors via frontend/src/hooks/useActor.ts anywhere in the app, and instead uses frontend/src/hooks/useAppActor.ts for actor creation in all non-immutable code paths.",
+      "reason": "The diff summary does not show modifications to any frontend components/pages/hooks (non-immutable paths) that would remove imports/calls to useActor, remove references to caffeineAdminToken, or remove calls to actor._initializeAccessControlWithSecret(...). Only a new verification script was added; that does not itself migrate usage.",
+      "evidence": [
+        "frontend/scripts/verify-actor-usage.ts",
+        "frontend/src/utils/urlParams.ts",
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "id": "REQ-63",
+      "requirement": "Fix the build/deploy failure by making the frontend actor interface usage compatible with the deployed backend candid interface (frontend must only call backend methods that exist in backend/main.mo).",
+      "reason": "No backend files (e.g., backend/main.mo) are shown as modified, and the diff summary does not show updates to frontend actor method calls to ensure they match backend/main.mo. Adding a scanner script does not prove the frontend calls only methods that exist in backend/main.mo.",
+      "evidence": [
+        "frontend/scripts/verify-actor-usage.ts",
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "id": "REQ-64",
+      "requirement": "Ensure the build/deployment pipeline completes successfully after the actor initialization fix.",
+      "reason": "The diff summary does not show changes that directly ensure the pipeline succeeds (e.g., removal of deprecated calls across the codebase, build configuration changes, or backend/interface adjustments). The added script may help catch issues, but it is not evidence that the build/deploy failure is fixed.",
+      "evidence": [
+        "frontend/scripts/verify-actor-usage.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Added a standalone Node verification script that scans the frontend for deprecated actor patterns (useActor, caffeineAdminToken, _initializeAccessControlWithSecret).",
+      "reason": "The BuildRequest requires removing deprecated usage and fixing build/deploy, but does not explicitly request adding a new verification script/tooling file. This is additional functionality beyond the stated requirements (though related).",
+      "evidence": [
+        "frontend/scripts/verify-actor-usage.ts"
+      ]
+    }
+  ],
+  "confidence": 0.62,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/scripts/verify-actor-usage.ts",
+    "frontend/src/utils/urlParams.ts",
+    "project_state.json"
+  ]
+}

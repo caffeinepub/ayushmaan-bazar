@@ -1,0 +1,67 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-07T04:10:15.820Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-62",
+        "summary": "Eliminate any runtime dependency on the backend method \"_initializeAccessControlWithSecret\" by ensuring the frontend no longer creates actors via frontend/src/hooks/useActor.ts anywhere in the app, and instead uses frontend/src/hooks/useAppActor.ts for actor creation in all non-immutable code paths.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/urlParams.ts",
+          "frontend/src/hooks/useCurrentUserProfile.ts",
+          "frontend/src/hooks/useNotifications.ts",
+          "frontend/src/hooks/usePolicies.ts",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/urlParams.ts"
+        ]
+      },
+      {
+        "id": "REQ-63",
+        "summary": "Fix the build/deploy failure by making the frontend actor interface usage compatible with the deployed backend candid interface (i.e., the frontend must only call backend methods that exist in backend/main.mo).",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/hooks/useAppActor.ts",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/hooks/usePolicies.ts"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-64",
+        "summary": "Ensure the build/deployment pipeline completes successfully after the actor initialization fix.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/package.json",
+          "frontend/scripts/verify-actor-usage.ts",
+          "frontend/src/hooks/useAppActor.ts"
+        ],
+        "matchedFiles": [
+          "frontend/scripts/verify-actor-usage.ts"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/scripts/verify-actor-usage.ts",
+    "frontend/src/utils/urlParams.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

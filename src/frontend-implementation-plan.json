@@ -1,0 +1,99 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Remove deprecated admin actor initialization usage and align frontend actor calls with deployed candid",
+  "requirements": [
+    {
+      "id": "REQ-62",
+      "summary": "Stop using the deprecated actor initialization flow by removing all non-immutable usage of useActor and any caffeineAdminToken/_initializeAccessControlWithSecret references, using useAppActor everywhere instead.",
+      "acceptanceCriteria": [
+        "A project-wide search shows no non-immutable frontend files import or call useActor from frontend/src/hooks/useActor.ts.",
+        "A project-wide search shows no non-immutable frontend files reference the URL parameter name \"caffeineAdminToken\" or call actor._initializeAccessControlWithSecret(...).",
+        "All existing data hooks and pages continue to function using the actor from useAppActor (anonymous and authenticated)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/urlParams.ts",
+          "operation": "modify",
+          "description": "Remove/replace any mentions of the \"caffeineAdminToken\" parameter name (including in comments/examples) and ensure this utility remains generic (no app-specific admin-token semantics) so the frontend has no runtime or textual dependency on that deprecated flow."
+        },
+        {
+          "path": "frontend/src/hooks/useCurrentUserProfile.ts",
+          "operation": "modify",
+          "description": "Verify this hook exclusively uses useAppActor for actor access and does not import/use useActor; adjust naming and enabled/loading logic if needed to preserve behavior with the useAppActor lifecycle."
+        },
+        {
+          "path": "frontend/src/hooks/useNotifications.ts",
+          "operation": "modify",
+          "description": "Verify this hook exclusively uses useAppActor for actor access and does not import/use useActor; keep query enablement aligned with actor readiness (anonymous and authenticated)."
+        },
+        {
+          "path": "frontend/src/hooks/usePolicies.ts",
+          "operation": "modify",
+          "description": "Verify these hooks exclusively use useAppActor for actor access and do not import/use useActor; ensure policyId/category queries remain enabled only when the app actor is ready."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Verify all mutations/queries exclusively use useAppActor for actor access and do not import/use useActor; preserve authenticated flows (save profile, submit lead, request callback, fetch rewards) without any admin/access-control secret initialization step."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Audit top-level wiring to ensure no route/layout/modal indirectly depends on useActor; confirm ProfileSetupModal and other always-mounted components rely on useAppActor-backed hooks only."
+        }
+      ]
+    },
+    {
+      "id": "REQ-63",
+      "summary": "Ensure frontend actor interface usage matches the deployed backend candid by calling only methods present in the backend interface and keeping the custom IDL factory aligned.",
+      "acceptanceCriteria": [
+        "Frontend builds successfully without TypeScript errors related to backend actor methods (no missing method references at compile time).",
+        "At runtime, the app starts without attempting to call any backend method not present in backend/main.mo (in particular, no calls to \"_initializeAccessControlWithSecret\").",
+        "Authenticated user flows still work: save profile, submit lead, request callback, and view rewards all succeed without any admin/access-control secret initialization step from the frontend."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAppActor.ts",
+          "operation": "modify",
+          "description": "Align the custom IDL factory service definition with the declared frontend backend interface (frontend/src/backend.d.ts) and ensure the returned actor type exposes only supported backend functions; do not add any initialization calls or references to deprecated admin-secret flows."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Audit all actor method invocations to ensure they are limited to methods defined in the current backend interface types; adjust any call sites/types to prevent compile-time and runtime mismatches."
+        },
+        {
+          "path": "frontend/src/hooks/usePolicies.ts",
+          "operation": "modify",
+          "description": "Audit all policy-related actor method invocations to ensure they only call methods defined in the current backend interface types; adjust any call sites/types to prevent compile-time and runtime mismatches."
+        }
+      ]
+    },
+    {
+      "id": "REQ-64",
+      "summary": "Make the frontend build pipeline succeed after removing deprecated actor initialization and method mismatches.",
+      "acceptanceCriteria": [
+        "A clean production build of the frontend completes successfully.",
+        "A clean canister build/deploy completes successfully with the updated codebase."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/package.json",
+          "operation": "modify",
+          "description": "Add/adjust a build-time verification script (e.g., a prebuild check) that fails the build if non-immutable frontend code imports useActor or contains deprecated strings/methods (\"caffeineAdminToken\", \"_initializeAccessControlWithSecret\"), helping ensure deploy-time failures do not recur."
+        },
+        {
+          "path": "frontend/scripts/verify-actor-usage.ts",
+          "operation": "create",
+          "description": "Implement a lightweight build verification script that scans frontend/src (excluding immutable paths) to ensure useActor is not imported/used and that deprecated admin-token/method strings are not present, supporting reliable CI builds."
+        },
+        {
+          "path": "frontend/src/hooks/useAppActor.ts",
+          "operation": "modify",
+          "description": "Ensure actor creation remains stable across environments (local/ic) and does not trigger any deprecated initialization work during app startup, preventing runtime failures during deploy smoke runs."
+        }
+      ]
+    }
+  ]
+}
